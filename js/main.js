@@ -2,10 +2,46 @@
 var underlayer = {
   init: function() {
     this.url = document.URL;
+    this.setListeners();
     this.underlay();
 
     /* check if current url has an image assosiated with it – otherwise, prompt user to upload image */
     typeof(localStorage[this.url] === "undefined") ? this.setImage() : this.showImageDialog();
+  },
+
+  setListeners: function() {
+    $(document).keydown(function(e) {
+      var key = e.keyCode;
+
+      // Return if cmd is pressed, so we can reload
+      if(underlayer.cmdpressed == true) { return; }
+
+      e.preventDefault();
+
+      // 82 == 'R' | 67 == 'C' | 91 == CMD
+      switch(key) {
+      case 82:
+        underlayer.showImageDialog();
+        break;
+      case 67:
+        underlayer.clear();
+        break;
+      case 91:
+        underlayer.cmdpressed = true;
+        console.log(underlayer.cmdpressed = true)
+      default:
+        return;
+      }
+
+    });
+
+    $(document).keyup(function(e) {
+      var key = e.keyCode;
+
+      if(key == 91) {
+        underlayer.cmdpressed = false;
+      }
+    });
   },
 
   addImage: function(evt) {
@@ -48,6 +84,11 @@ var underlayer = {
   setImage: function(){
     var imgData = localStorage.getItem(this.url);
     $('#underlayer').css('background-image','url("'+imgData+'")')
+  },
+
+  clear: function() {
+    $('#underlayer').hide();
+    this.hideImageDialog();
   }
 
 }
