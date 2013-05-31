@@ -3,7 +3,10 @@ var underlayer = {
   init: function() {
     this.url = document.URL;
     this.setListeners();
-    this.underlay();
+
+    if(localStorage.getItem('underlayer-toggled') != 'false') {
+      this.underlay();
+    }
   },
 
   setListeners: function() {
@@ -114,7 +117,13 @@ var underlayer = {
   },
 
   toggle: function() {
-    $('#underlayer').is(':visible') ? this.clear() : this.underlay();
+    if($('#underlayer').is(':visible')) {
+     localStorage.setItem('underlayer-toggled',false)
+     this.clear();
+    } else {
+      localStorage.setItem('underlayer-toggled',true)
+      this.underlay();
+    }
   },
 
   clear: function() {
