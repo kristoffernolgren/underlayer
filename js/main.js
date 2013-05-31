@@ -84,6 +84,7 @@ var underlayer = {
   setImage: function(){
     var imgData = localStorage.getItem(this.url);
     $('#underlayer').css('background-image','url("'+imgData+'")')
+    $('#underlayer').show();
   },
 
   clear: function() {
