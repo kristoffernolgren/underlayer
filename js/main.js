@@ -16,14 +16,17 @@ var underlayer = {
       // Return if cmd is pressed, so we can reload
       if(underlayer.cmdpressed == true) { return; }
 
-      e.preventDefault();
-
-      // 82 == 'R' | 67 == 'C' | 91 == CMD
+      // 80 == 'P' | 82 == 'R' | 67 == 'C' | 91 == CMD
       switch(key) {
+      case 80:
+        underlayer.positionDialog();
+        break;
       case 82:
+        if($('#position-dialog').is(':visible')) { return; }
         underlayer.showImageDialog();
         break;
       case 67:
+        if($('#position-dialog').is(':visible')) { return; }
         underlayer.clear();
         break;
       case 91:
@@ -87,8 +90,29 @@ var underlayer = {
     $('#underlayer').show();
   },
 
+  positionDialog: function() {
+    // This should be more DRY, combine with imagedialog etc.
+    var $dialog = $('<div id="position-dialog"></div>'),
+        $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black; position: absolute; top: 45%; left: 50%; margin: -50px 0 0 -150px; background: white; padding: 4px 8px; z-index:1;" />');
+        $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black; position: absolute; top: 50%; left: 50%; margin: -50px 0 0 -150px; background: white;  padding: 4px 8px; z-index:1;" />');
+
+    $('body').prepend($dialog.append($inputTop,$inputLeft));
+  },
+
+  setPosition: function() {
+    var top = $('#bg-position-top').val(),
+        left = $('#bg-position-left').val();
+
+    $('#underlayer').css('background-position',top+underlayer.positionUnit(top)+' '+left+underlayer.positionUnit(left));
+  },
+
+  positionUnit: function(string) {
+    return isNaN(string) === true ? '' : 'px'
+  },
+
   clear: function() {
     $('#underlayer').hide();
+    $('#position-dialog').remove();
     this.hideImageDialog();
   }
 
@@ -97,4 +121,5 @@ var underlayer = {
 $(function() {
   underlayer.init();
   $(document.body).on('change', '#bgfile', underlayer.addImage);
+  $(document.body).on('change', '.bg-position', underlayer.setPosition);
 });
