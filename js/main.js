@@ -4,9 +4,6 @@ var underlayer = {
     this.url = document.URL;
     this.setListeners();
     this.underlay();
-
-    /* check if current url has an image assosiated with it – otherwise, prompt user to upload image */
-    typeof(localStorage[this.url] === "undefined") ? this.setImage() : this.showImageDialog();
   },
 
   setListeners: function() {
@@ -16,7 +13,7 @@ var underlayer = {
       // Return if cmd is pressed, so we can reload
       if(underlayer.cmdpressed == true) { return; }
 
-      // 80 == 'P' | 82 == 'R' | 67 == 'C' | 91 == CMD
+      // 80 == 'P' | 82 == 'R' | 84 == 'T' | 67 == 'C' | 91 == CMD
       switch(key) {
       case 80:
         underlayer.positionDialog();
@@ -24,6 +21,10 @@ var underlayer = {
       case 82:
         if($('#position-dialog').is(':visible')) { return; }
         underlayer.showImageDialog();
+        break;
+      case 84:
+        if($('#position-dialog').is(':visible')) { return; }
+        underlayer.toggle();
         break;
       case 67:
         if($('#position-dialog').is(':visible')) { return; }
@@ -82,6 +83,8 @@ var underlayer = {
     $('body > *').css('opacity', 0.5);
     /*Add image behind*/
     $('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" />');
+
+    typeof(localStorage[this.url] === "undefined") ? this.setImage() : this.showImageDialog();
   },
 
   setImage: function(){
@@ -110,7 +113,12 @@ var underlayer = {
     return isNaN(string) === true ? '' : 'px'
   },
 
+  toggle: function() {
+    $('#underlayer').is(':visible') ? this.clear() : this.underlay();
+  },
+
   clear: function() {
+    $('body > *').css('opacity', '');
     $('#underlayer').hide();
     $('#position-dialog').remove();
     this.hideImageDialog();
