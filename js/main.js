@@ -6,16 +6,16 @@ $( document ).ready(function() {
 
 
   /*check if current url has an image assosiated with it.*/
-	if(localStorage[thisurl]){
+  if(localStorage[thisurl]){
     /*if it has, underlay that image*/
     underlay();
     setimage();
-	}
-	else{
+  }
+  else{
     /*otherwise, prompt user to upload image*/
     underlay();
     showimagedialog();
-	}
+  }
 
 });
 
@@ -41,7 +41,7 @@ function addimage(evt) {
 
 
 function showimagedialog(){
-  $('body').prepend('<div id="imagedialog"><input type="file" id="bgfile" name="files[]" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 260px;height: 60px; padding: 20px;" />');
+  $('body').prepend('<div id="imagedialog"><input type="file" id="bgfile" name="files[]" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 260px;height: 60px; padding: 20px;z-index:1;" />');
 }
 function hideimagedialog(){
   $('#imagedialog').remove();
