@@ -88,6 +88,7 @@ var underlayer = {
     $('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" />');
 
     typeof(localStorage[this.url] === "undefined") ? this.setImage() : this.showImageDialog();
+    this.setPosition();
   },
 
   setImage: function(){
@@ -109,7 +110,20 @@ var underlayer = {
     var top = $('#bg-position-top').val(),
         left = $('#bg-position-left').val();
 
-    $('#underlayer').css('background-position',top+underlayer.positionUnit(top)+' '+left+underlayer.positionUnit(left));
+    if(typeof(top) != 'undefined') {
+      localStorage.setItem('top',top);
+    };
+
+    if(typeof(left) != 'undefined') {
+      localStorage.setItem('left',left);
+    };
+
+    var lsTop = localStorage.getItem('top'),
+        lsLeft = localStorage.getItem('left');
+
+    if(lsTop != null && lsLeft != null) {
+      $('#underlayer').css('background-position',lsLeft+underlayer.positionUnit(lsLeft)+' '+lsTop+underlayer.positionUnit(lsTop));
+    }
   },
 
   positionUnit: function(string) {
