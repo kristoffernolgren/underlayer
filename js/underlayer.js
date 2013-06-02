@@ -12,7 +12,6 @@ var underlayer = {
   setListeners: function() {
     $(document).keydown(function(e) {
       var key = e.keyCode;
-
       // Return if cmd is pressed, so we can reload
       if(underlayer.cmdpressed == true) { return; }
 
@@ -31,7 +30,6 @@ var underlayer = {
       default:
         return;
       }
-
     });
 
     $(document).keyup(function(e) {
@@ -68,7 +66,7 @@ var underlayer = {
         $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black;margin-bottom:5px" />');
         $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black;margin-bottom:5px" />');
 
-    $('body').prepend($Dialog.append($imageInput, $inputTop, $inputLeft));
+    $('body').append($Dialog.append($imageInput, $inputTop, $inputLeft));
   },
 
   hideDialog: function(){
@@ -127,7 +125,7 @@ var underlayer = {
 
   clear: function() {
     $('body > *').css('opacity', '');
-    $('#underlayer').hide();
+    $('#underlayer').remove();
     $('#position-dialog').remove();
     this.hideDialog();
   }
