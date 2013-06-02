@@ -1,7 +1,9 @@
-/*This is the url we are on.*/
+//todo add a namespace to all local-storage-variables
+
 var underlayer = {
   init: function() {
     this.url = document.URL;
+    //gör det här med togglern istället kanske?
     this.setListeners();
     //show image-dialog if no image is set
 
