@@ -144,7 +144,7 @@ var underlayer = {
     $('body > *').css('opacity', '');
     $('#underlayer').hide();
     $('#position-dialog').remove();
-    this.hideImageDialog();
+    this.hideDialog();
   }
 
 }
