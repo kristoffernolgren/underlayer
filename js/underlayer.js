@@ -1,5 +1,5 @@
 //todo add a namespace to all local-storage-variables
-//Image disapears when toggling on/off
+
 var underlayer = {
   init: function() {
     this.url = document.URL;
@@ -10,9 +10,8 @@ var underlayer = {
     //gör det här med togglern istället kanske?
     if(localStorage.getItem('underlayer-toggled') != 'false') {
       this.showUnderlay();
+
       //show image-dialog if no image is set
-
-
       if(localStorage.getItem([this.url]) === null){
         localStorage.setItem('underlayer-toggled',true)
         this.showDialog();
@@ -23,19 +22,15 @@ var underlayer = {
   setListeners: function() {
     $(document).keydown(function(e) {
       var key = e.keyCode;
-      // Return if cmd is pressed, so we can reload
-      //if(underlayer.cmdpressed == true) { return; }(reduntant)
-
-      // 80 == 'P' | 82 == 'R' | 84 == 'T' | 67 == 'C' | 91 == CMD
       switch(key) {
-      case 84:
-        underlayer.toggle();
-        break;
-      case 85:
-          underlayer.showDialog();
-        break;
-      default:
-        return;
+        case 84:
+          underlayer.toggle();
+          break;
+        case 85:
+            underlayer.showDialog();
+          break;
+        default:
+          return;
       }
     });
 
@@ -66,11 +61,10 @@ var underlayer = {
     if(!($('#dialog').length)){
       var $dialog = $('<div id="dialog" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 300px;height: 150px;padding: 20px"></div>'),
           $imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px;" />'),
-          $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black;margin-bottom:5px;" />'),
-          $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black;margin-bottom:5px;" />'),
-          $closeButton = $('<a style="display: block;" id="closeButton" href="#">Save &amp; Close</a>'),
-          $instruction = $('<p style="font-size: 11px;color: black;text-shadow: 0 0 1.3em white;margin-left: 1em;">Press "U" to Update your image-settings later.</p><p style="font-size: 11px;color: black;text-shadow: 0 0 1.3em white;margin-left: 1em;">Press "T" to Toggle on/off.</p>');
-      $('body').append($dialog.append($imageInput, $inputTop, $inputLeft, $closeButton, $instruction));
+          $positionButtons = $('<a class="align" data-postion="left" href>Left</a><a class="align" data-postion="center" href>Center</a><a class="align" data-postion="right" href>Right</a>')
+          $closeButton = $('<a style="display: block;" id="closeButton" href>Save &amp; Close</a>'),
+          $instruction = $('<p style="font-size: 11px;color: black;text-shadow: 0 0 1.3em white;margin-left: 1em;">Press "U" to Update your image-settings later.</p><p style="font-size: 11px;color: black;text-shadow: 0 0 1.3em white;margin-left: 1em;">Press "T" to Toggle on/off.</p><p style="font-size: 11px;color: black;text-shadow: 0 0 1.3em white;margin-left: 1em;">Use arrows to offset(not implemnted yet).</p>');
+      $('body').append($dialog.append($imageInput, $positionButtons, $closeButton, $instruction));
       };
   },
 
@@ -83,7 +77,9 @@ var underlayer = {
     $('body > *:not(#dialog)').css('opacity', 0.5);
     /*Add image behind*/
     $('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" ></div>');
+    this.setImage();
     this.setPosition();
+
   },
 
   hideUnderlay: function() {
@@ -104,49 +100,42 @@ var underlayer = {
       reader.onload = (function(theFile) {
         return function(e) {
           localStorage.setItem(underlayer.url, e.target.result);
-          /*Add image to background*/
-          underlayer.hideDialog();
+          //add image
           underlayer.setImage();
         };
       })(file);
     }
   },
 
+  addPosition: function(alignment){
+    localStorage.setItem('alignment', alignment);
+    underlayer.setPosition();
+  },
+
   setImage: function(){
     var imgData = localStorage.getItem(this.url);
     $('#underlayer').css('background-image','url("'+imgData+'")')
-    $('#underlayer').show();
   },
 
   setPosition: function() {
-    var top = $('#bg-position-top').val(),
-        left = $('#bg-position-left').val();
-
-    if(typeof(top) != 'undefined') {
-      localStorage.setItem('top',top);
-    };
-
-    if(typeof(left) != 'undefined') {
-      localStorage.setItem('left',left);
-    };
-
-    var lsTop = localStorage.getItem('top'),
-        lsLeft = localStorage.getItem('left');
-
-    if(lsTop != null && lsLeft != null) {
-      $('#underlayer').css('background-position',lsLeft+underlayer.positionUnit(lsLeft)+' '+lsTop+underlayer.positionUnit(lsTop));
-    }
+    var posData = localStorage.getItem('alignment');
+    console.log(posData)
+    $('#underlayer').css('background-position','top '+ posData)
   },
 
-  positionUnit: function(string) {
-    return isNaN(string) === true ? '' : 'px'
-  }
 
 }
 
 $(function() {
   underlayer.init();
   $(document.body).on('change', '#bgfile', underlayer.addImage);
-  $(document.body).on('change', '.bg-position', underlayer.setPosition);
-  $(document.body).on('click', '#closeButton', underlayer.hideDialog);
+  $(document.body).on('click', '#closeButton', function(){
+    event.preventDefault();
+    underlayer.hideDialog();
+  });
+  $(document.body).on('click', '.align', function(){
+    event.preventDefault();
+
+    underlayer.addPosition($(this).attr('data-postion'))
+  });
 });
