@@ -29,6 +29,10 @@ var underlayer = {
       switch(key) {
       case 84:
         underlayer.toggle();
+        break;
+      case 85:
+        underlayer.showDialog();
+        break;
       default:
         return;
       }
@@ -57,11 +61,11 @@ var underlayer = {
 
   showDialog: function(){
     var $Dialog = $('<div id="Dialog" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 300px;height: 150px;padding: 20px"></div>'),
-        $imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px;" />');
-        $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black;margin-bottom:5px;" />');
-        $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black;margin-bottom:5px;" />');
-
-    $('body').append($Dialog.append($imageInput, $inputTop, $inputLeft));
+        $imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px;" />'),
+        $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black;margin-bottom:5px;" />'),
+        $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black;margin-bottom:5px;" />'),
+        $closeButton = $('<a style="display: block;" id="closeButton" href="#">Save &amp; Close</a>');
+    $('body').append($Dialog.append($imageInput, $inputTop, $inputLeft, $closeButton));
   },
 
   hideDialog: function(){
@@ -72,8 +76,7 @@ var underlayer = {
     /*make page transparent*/
     $('body > *').css('opacity', 0.5);
     /*Add image behind*/
-    $('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" />');
-
+    $('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" ><p style="font-size: 11px;color: white;text-shadow: 0 0 1.3em black;margin-left: 1em;">Press "U" to Update your image-settings.</p></div>');
     typeof(localStorage[this.url] === "undefined") ? this.setImage() : this.showDialog();
     this.setPosition();
   },
@@ -140,4 +143,5 @@ $(function() {
   underlayer.init();
   $(document.body).on('change', '#bgfile', underlayer.addImage);
   $(document.body).on('change', '.bg-position', underlayer.setPosition);
+  $(document.body).on('click', '#closeButton', underlayer.hideDialog);
 });
