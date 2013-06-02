@@ -4,7 +4,6 @@ var underlayer = {
   init: function() {
     this.url = document.URL;
     this.setListeners();
-    //Knappar till dialog-rutan istället för fält.
     //lägg bilden längst ner i skissen dom:en istället så den inte är så ivägen.
 
     //gör det här med togglern istället kanske?
