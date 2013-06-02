@@ -3,12 +3,13 @@
 var underlayer = {
   init: function() {
     this.url = document.URL;
-    //gör det här med togglern istället kanske?
     this.setListeners();
-    //show image-dialog if no image is set
+    //gör det här med togglern istället kanske?
+    //Gör en toggler för dialog-rutan också. Den ska bara funka när underlayer-toggled är på.
 
     if(localStorage.getItem('underlayer-toggled') != 'false') {
       this.underlay();
+      //show image-dialog if no image is set
       if(typeof(localStorage[this.url] === "undefined")){
         localStorage.setItem('underlayer-toggled',true)
         this.showDialog();
@@ -113,7 +114,7 @@ var underlayer = {
   },
 
   toggle: function() {
-    if($('#underlayer').is(':visible')) {
+    if(localStorage.getItem('underlayer-toggled') == 'true') {
      localStorage.setItem('underlayer-toggled',false)
      this.clear();
     } else {
