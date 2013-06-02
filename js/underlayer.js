@@ -4,11 +4,13 @@ var underlayer = {
   init: function() {
     this.url = document.URL;
     this.setListeners();
-    //gör det här med togglern istället kanske?
     //Gör en toggler för dialog-rutan också. Den ska bara funka när underlayer-toggled är på.
+    //Knappar till dialog-rutan istället för fält.
+    //lägg bilden längst ner i skissen dom:en istället så den inte är så ivägen.
 
+    //gör det här med togglern istället kanske?
     if(localStorage.getItem('underlayer-toggled') != 'false') {
-      this.underlay();
+      this.showUnderlay();
       //show image-dialog if no image is set
       if(typeof(localStorage[this.url] === "undefined")){
         localStorage.setItem('underlayer-toggled',true)
@@ -41,6 +43,48 @@ var underlayer = {
     });
   },
 
+  toggle: function() {
+    if(localStorage.getItem('underlayer-toggled') == 'true') {
+     localStorage.setItem('underlayer-toggled',false)
+     this.hideUnderlay();
+    } else {
+      localStorage.setItem('underlayer-toggled',true)
+      this.showUnderlay();
+      this.showDialog();
+    }
+  },
+
+
+  showDialog: function(){
+    var $Dialog = $('<div id="Dialog" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 300px;height: 150px;padding: 20px"></div>'),
+        $imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px;" />');
+        $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black;margin-bottom:5px;" />');
+        $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black;margin-bottom:5px;" />');
+
+    $('body').append($Dialog.append($imageInput, $inputTop, $inputLeft));
+  },
+
+  hideDialog: function(){
+    $('#Dialog').remove();
+  },
+
+  showUnderlay: function(){
+    /*make page transparent*/
+    $('body > *').css('opacity', 0.5);
+    /*Add image behind*/
+    $('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" />');
+
+    typeof(localStorage[this.url] === "undefined") ? this.setImage() : this.showDialog();
+    this.setPosition();
+  },
+
+  hideUnderlay: function() {
+    $('body > *').css('opacity', '');
+    $('#underlayer').remove();
+    $('#position-dialog').remove();
+    this.hideDialog();
+  },
+
   addImage: function(evt) {
     var file = evt.target.files[0];
     /* Only process image files.*/
@@ -58,29 +102,6 @@ var underlayer = {
         };
       })(file);
     }
-  },
-
-  showDialog: function(){
-    var $Dialog = $('<div id="Dialog" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 300px;height: 150px;padding: 20px"></div>'),
-        $imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px;" />');
-        $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black;margin-bottom:5px;" />');
-        $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black;margin-bottom:5px;" />');
-
-    $('body').append($Dialog.append($imageInput, $inputTop, $inputLeft));
-  },
-
-  hideDialog: function(){
-    $('#Dialog').remove();
-  },
-
-  underlay: function(){
-    /*make page transparent*/
-    $('body > *').css('opacity', 0.5);
-    /*Add image behind*/
-    $('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" />');
-
-    typeof(localStorage[this.url] === "undefined") ? this.setImage() : this.showDialog();
-    this.setPosition();
   },
 
   setImage: function(){
@@ -111,24 +132,6 @@ var underlayer = {
 
   positionUnit: function(string) {
     return isNaN(string) === true ? '' : 'px'
-  },
-
-  toggle: function() {
-    if(localStorage.getItem('underlayer-toggled') == 'true') {
-     localStorage.setItem('underlayer-toggled',false)
-     this.clear();
-    } else {
-      localStorage.setItem('underlayer-toggled',true)
-      this.underlay();
-      this.showDialog();
-    }
-  },
-
-  clear: function() {
-    $('body > *').css('opacity', '');
-    $('#underlayer').remove();
-    $('#position-dialog').remove();
-    this.hideDialog();
   }
 
 }
