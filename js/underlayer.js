@@ -3,9 +3,14 @@ var underlayer = {
   init: function() {
     this.url = document.URL;
     this.setListeners();
+    //show image-dialog if no image is set
 
     if(localStorage.getItem('underlayer-toggled') != 'false') {
       this.underlay();
+      if(typeof(localStorage[this.url] === "undefined")){
+        localStorage.setItem('underlayer-toggled',true)
+        this.showDialog();
+      }
     }
   },
 
@@ -13,20 +18,12 @@ var underlayer = {
     $(document).keydown(function(e) {
       var key = e.keyCode;
       // Return if cmd is pressed, so we can reload
-      if(underlayer.cmdpressed == true) { return; }
+      //if(underlayer.cmdpressed == true) { return; }(reduntant)
 
       // 80 == 'P' | 82 == 'R' | 84 == 'T' | 67 == 'C' | 91 == CMD
       switch(key) {
-      case 82:
-        if($('#position-dialog').is(':visible')) { return; }
-        underlayer.showDialog();
-        break;
       case 84:
-        if($('#position-dialog').is(':visible')) { return; }
         underlayer.toggle();
-        break;
-      case 91:
-        underlayer.cmdpressed = true;
       default:
         return;
       }
@@ -61,10 +58,10 @@ var underlayer = {
   },
 
   showDialog: function(){
-    var $Dialog = $('<div id="Dialog" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 300px;height: 150px;padding: 20px;"></div>'),
-        $imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px" />');
-        $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black;margin-bottom:5px" />');
-        $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black;margin-bottom:5px" />');
+    var $Dialog = $('<div id="Dialog" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 300px;height: 150px;padding: 20px"></div>'),
+        $imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px;" />');
+        $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black;margin-bottom:5px;" />');
+        $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black;margin-bottom:5px;" />');
 
     $('body').append($Dialog.append($imageInput, $inputTop, $inputLeft));
   },
@@ -120,6 +117,7 @@ var underlayer = {
     } else {
       localStorage.setItem('underlayer-toggled',true)
       this.underlay();
+      this.showDialog();
     }
   },
 
