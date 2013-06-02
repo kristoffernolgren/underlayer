@@ -18,24 +18,16 @@ var underlayer = {
 
       // 80 == 'P' | 82 == 'R' | 84 == 'T' | 67 == 'C' | 91 == CMD
       switch(key) {
-      case 80:
-        underlayer.positionDialog();
-        break;
       case 82:
         if($('#position-dialog').is(':visible')) { return; }
-        underlayer.showImageDialog();
+        underlayer.showDialog();
         break;
       case 84:
         if($('#position-dialog').is(':visible')) { return; }
         underlayer.toggle();
         break;
-      case 67:
-        if($('#position-dialog').is(':visible')) { return; }
-        underlayer.clear();
-        break;
       case 91:
         underlayer.cmdpressed = true;
-        console.log(underlayer.cmdpressed = true)
       default:
         return;
       }
@@ -63,22 +55,24 @@ var underlayer = {
         return function(e) {
           localStorage.setItem(underlayer.url, e.target.result);
           /*Add image to background*/
-          underlayer.hideImageDialog();
+          underlayer.hideDialog();
           underlayer.setImage();
         };
       })(file);
     }
   },
 
-  showImageDialog: function(){
-    var $imageDialog = $('<div id="imagedialog"></div>'),
-        $imageInput = $('<input type="file" id="bgfile" name="files[]" style="position: absolute; top: 50%; left: 50%; margin: -50px 0 0 -150px; background: gray; width: 260px; height: 60px; padding: 20px; z-index:1;" />');
+  showDialog: function(){
+    var $Dialog = $('<div id="Dialog" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 300px;height: 150px;padding: 20px;"></div>'),
+        $imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px" />');
+        $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black;margin-bottom:5px" />');
+        $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black;margin-bottom:5px" />');
 
-    $('body').prepend($imageDialog.append($imageInput));
+    $('body').prepend($Dialog.append($imageInput, $inputTop, $inputLeft));
   },
 
-  hideImageDialog: function(){
-    $('#imagedialog').remove();
+  hideDialog: function(){
+    $('#Dialog').remove();
   },
 
   underlay: function(){
@@ -87,7 +81,7 @@ var underlayer = {
     /*Add image behind*/
     $('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" />');
 
-    typeof(localStorage[this.url] === "undefined") ? this.setImage() : this.showImageDialog();
+    typeof(localStorage[this.url] === "undefined") ? this.setImage() : this.showDialog();
     this.setPosition();
   },
 
@@ -95,15 +89,6 @@ var underlayer = {
     var imgData = localStorage.getItem(this.url);
     $('#underlayer').css('background-image','url("'+imgData+'")')
     $('#underlayer').show();
-  },
-
-  positionDialog: function() {
-    // This should be more DRY, combine with imagedialog etc.
-    var $dialog = $('<div id="position-dialog"></div>'),
-        $inputTop = $('<input type="text" class="bg-position" placeholder="top" id="bg-position-top" style="border: 1px solid black; position: absolute; top: 45%; left: 50%; margin: -50px 0 0 -150px; background: white; padding: 4px 8px; z-index:1;" />');
-        $inputLeft = $('<input type="text" class="bg-position" placeholder="left" id="bg-position-left" style="border: 1px solid black; position: absolute; top: 50%; left: 50%; margin: -50px 0 0 -150px; background: white;  padding: 4px 8px; z-index:1;" />');
-
-    $('body').prepend($dialog.append($inputTop,$inputLeft));
   },
 
   setPosition: function() {
