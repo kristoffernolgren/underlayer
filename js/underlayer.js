@@ -122,7 +122,7 @@ var underlayer = {
 		/*make page transparent*/
 		$('body > *:not(#dialog)').css('opacity', 0.5);
 		/*Add image behind*/
-		$('body').append('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" ></div>');
+		$('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" ></div>');
 		this.setImage();
 		this.setPosition();
 
