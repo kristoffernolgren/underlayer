@@ -1,5 +1,4 @@
 //todo add a namespace to all local-storage-variables
-
 var underlayer = {
   init: function() {
     this.url = document.URL;
@@ -44,10 +43,8 @@ var underlayer = {
 
   toggle: function() {
     if(localStorage.getItem('underlayer-toggled') == 'true') {
-     localStorage.setItem('underlayer-toggled',false)
      this.hideUnderlay();
     } else {
-      localStorage.setItem('underlayer-toggled',true)
       this.showUnderlay();
       if(localStorage.getItem([this.url]) === null){
         this.showDialog();
@@ -57,6 +54,9 @@ var underlayer = {
 
 
   showDialog: function(){
+    if(localStorage.getItem('underlayer-toggled') == 'false') {
+      this.showUnderlay();
+    };
     if(!($('#dialog').length)){
       var $dialog = $('<div id="dialog" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 300px;height: 150px;padding: 20px"></div>'),
           $imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px;" />'),
@@ -72,6 +72,7 @@ var underlayer = {
   },
 
   showUnderlay: function(){
+    localStorage.setItem('underlayer-toggled',true);
     /*make page transparent*/
     $('body > *:not(#dialog)').css('opacity', 0.5);
     /*Add image behind*/
@@ -82,6 +83,7 @@ var underlayer = {
   },
 
   hideUnderlay: function() {
+    localStorage.setItem('underlayer-toggled',false);
     $('body > *').css('opacity', '');
     $('#underlayer').remove();
     $('#position-dialog').remove();
