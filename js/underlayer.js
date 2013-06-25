@@ -122,10 +122,10 @@ var underlayer = {
 		/*make page transparent*/
 		$('body > *:not(#dialog)').css('opacity', 0.5);
 		/*Add image behind*/
-		$('body').prepend('<div id="underlayer" style="width: 100%; height: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" ></div>');
+		$('body').prepend('<div id="underlayer" style="width: 100%; position: absolute; background-repeat: no-repeat; background-position: center top; top: 0;" ></div>');
 		this.setImage();
 		this.setPosition();
-
+		this.setHeight();
 	},
 
 	hideUnderlay: function() {
@@ -149,6 +149,9 @@ var underlayer = {
 					localStorage.setItem(underlayer.url, e.target.result);
 					//add image
 					underlayer.setImage();
+					underlayer.setPosition();
+					setTimeout(underlayer.setHeight, 500);
+					
 				};
 			})(file);
 		}
@@ -160,14 +163,26 @@ var underlayer = {
 	},
 
 	setImage: function(){
+		//adds underlay-image
 		var imgData = localStorage.getItem(this.url);
 		$('#underlayer').css('background-image','url("'+imgData+'")')
 	},
 
 	setPosition: function() {
+		//sets the position to presets
 		var posData = localStorage.getItem('alignment');
 		$('#underlayer').css('background-position','top '+ posData)
 	},
+
+	setHeight: function() {
+		//sets the height of the background
+		var img = new Image;
+		img.src = $('#underlayer').css('background-image').replace(/url\(|\)$/ig, "");
+		var height = img.height +'px';
+
+		console.log(height);
+		$('#underlayer').css('height',height);
+	}
 
 
 }
