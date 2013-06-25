@@ -92,6 +92,8 @@ var underlayer = {
 		 this.hideUnderlay();
 		} else {
 			this.showUnderlay();
+			this.setPosition();
+			this.setHeight();
 			if(localStorage.getItem([this.url]) === null){
 				this.showDialog();
 			};
