@@ -1,4 +1,5 @@
-//todo add a namespace to all local-storage-variables
+//todo add a namespace to all local-storage-variables, i funktionerna, göra en set-funktion också.
+
 var underlayer = {
 	init: function() {
 		this.url = document.URL;
@@ -6,11 +7,11 @@ var underlayer = {
 
 		localStorage.setItem('offsetX', 0)
 		localStorage.setItem('offsetY', 0)
+		localStorage.setItem('underlayer-dialog',false);
+		localStorage.setItem('underlayer-toggled',false);
 
 
-
-		//gör det här med toggler-funktionen istället kanske?
-		if(localStorage.getItem('underlayer-toggled') != 'false') {
+		if(!underlayer.locastorageBool('underlayer-toggled')) {
 			this.showUnderlay();
 
 			//show image-dialog if no image is set
@@ -33,25 +34,25 @@ var underlayer = {
 					break;
 
 				case 37:
-					if(localStorage.getItem('underlayer-toggled') == 'true') {
+					if(underlayer.locastorageBool('underlayer-toggled')) {
 						e.preventDefault();
 						underlayer.backgroundOffset('left');
 						break;
 					}
 				case 38:
-					if(localStorage.getItem('underlayer-toggled') == 'true') {
+					if(underlayer.locastorageBool('underlayer-toggled')) {
 						e.preventDefault();
 						underlayer.backgroundOffset('up');
 						break;
 					}
 				case 39:
-					if(localStorage.getItem('underlayer-toggled') == 'true') {
+					if(underlayer.locastorageBool('underlayer-toggled')) {
 						e.preventDefault();
 						underlayer.backgroundOffset('right');
 						break;
 					}
 				case 40:
-					if(localStorage.getItem('underlayer-toggled') == 'true') {
+					if(underlayer.locastorageBool('underlayer-toggled')) {
 						e.preventDefault();
 						underlayer.backgroundOffset('down');
 						break;
@@ -88,12 +89,18 @@ var underlayer = {
 	},
 
 	toggle: function() {
-		if(localStorage.getItem('underlayer-toggled') == 'true') {
-		 this.hideUnderlay();
-		} else {
+		if(underlayer.locastorageBool('underlayer-dialog')){
+			this.hideDialog();
+			localStorage.setItem('underlayer-dialog',false);
+		}
+		//underlay visible, hide
+		else if(underlayer.locastorageBool('underlayer-toggled')) {
+		 	this.hideUnderlay();
+		}
+		 //underlay hidden, show and do the settings
+		else {
+			//@todo, varför behöver det här göras här?
 			this.showUnderlay();
-			this.setPosition();
-			this.setHeight();
 			if(localStorage.getItem([this.url]) === null){
 				this.showDialog();
 			};
@@ -102,10 +109,11 @@ var underlayer = {
 
 
 	showDialog: function(){
-		if(localStorage.getItem('underlayer-toggled') == 'false') {
+		if(!underlayer.locastorageBool('underlayer-toggled')) {
 			this.showUnderlay();
 		};
-		if(!($('#dialog').length)){
+		if(!underlayer.locastorageBool('underlayer-dialog')){
+			localStorage.setItem('underlayer-dialog',true);
 			var $dialog = $('<div id="dialog" style="position: absolute;top: 50%;left: 50%;margin: -50px 0 0 -150px;background: gray;width: 300px;height: 150px;padding: 20px"></div>'),
 					$imageInput = $('<input type="file" id="bgfile" name="files[]" style="margin-bottom:5px;" />'),
 					$positionButtons = $('<a class="align" data-postion="left" href>Left</a><a class="align" data-postion="center" href>Center</a><a class="align" data-postion="right" href>Right</a>')
@@ -120,6 +128,7 @@ var underlayer = {
 	},
 
 	showUnderlay: function(){
+		//update toggle
 		localStorage.setItem('underlayer-toggled',true);
 		/*make page transparent*/
 		$('body > *:not(#dialog)').css('opacity', 0.5);
@@ -135,7 +144,6 @@ var underlayer = {
 		$('body > *').css('opacity', '');
 		$('#underlayer').remove();
 		$('#position-dialog').remove();
-		this.hideDialog();
 	},
 
 	addImage: function(evt) {
@@ -178,12 +186,23 @@ var underlayer = {
 
 	setHeight: function() {
 		//sets the height of the background
-		var img = new Image;
-		img.src = $('#underlayer').css('background-image').replace(/url\(|\)$/ig, "");
-		var height = img.height +'px';
+		//check if loaded somehow
+		var imgData = localStorage.getItem(this.url);
+		$('<img/>').attr('src', imgData).load(function() {
+			var height = this.height +'px';
+			console.log(height)
+			$('#underlayer').css('height',height);
+		});
+		
+	},
 
-		console.log(height);
-		$('#underlayer').css('height',height);
+	locastorageBool: function(localstoragename){
+		if(localStorage.getItem(localstoragename) === 'true'){
+			return true
+		}
+		else{
+			return false
+		}
 	}
 
 
